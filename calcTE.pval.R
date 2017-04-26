@@ -1,8 +1,8 @@
 calcTE.pval <- function(estimate, p.value,
-                        sm = ifelse(!missing(event.e, "HR", "")),
+                        sm = ifelse(!missing(event.e), "HR", ""),
                         logtransf = ifelse(sm %in% c("OR", "RR", "HR"),
                                            TRUE, FALSE),
-                        event.e, n.e, event.c, n.c, pos.effect = TRUE) {
+                        event.e, n.e, event.c, n.c, above.null = TRUE) {
   
   
   ##
@@ -54,28 +54,30 @@ calcTE.pval <- function(estimate, p.value,
     ##
     V <- c(V1, V2)
     p.value <- c(p.value, p.value)
-    pos.effect <- c(pos.effect)
+    above.null <- c(above.null, above.null)
     method <- rep(c("method1", "method2"), each = length(V1))
     ##
     ## Equations (10), (13), and (14)
     ##
     OE <- sqrt(V) * qnorm(p.value / 2, lower.tail = FALSE)
     ##
-    OE <- ifelse(pos.effect, OE, -OE)
+    OE <- ifelse(above.null, OE, -OE)
     ##
     ## Equations
     ##
     res <- list(TE = OE / V,        # equation (4)
                 seTE = sqrt(1 / V), # equation (5)
-                method = method,
                 sm = sm,
+                method = method,
                 ##
                 OE = OE, V = V,
                 ##
-                event.e = event.e, n.e = n.e,
-                event.c = event.c, n.c = n.c,
-                p.value = p.value,
-                pos.effect = pos.effect)
+                event.e = event.e)
+    if (!missing(n.e)) res$n.e <- n.e
+    res$event.c <- event.c
+    if (!missing(n.c)) res$n.c <- n.c
+    res$p.value <- p.value
+    res$above.null <- above.null
   }
   
   
