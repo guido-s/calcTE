@@ -57,9 +57,9 @@ calcTE.pval <- function(estimate, p.value,
     if (missing(event.c))
       stop("Argument 'event.c' missing")
     ##
-    meta::chknumeric(event.e, 0)
-    meta::chknumeric(event.c, 0)
-    meta::chklogical(above.null)
+    meta:::chknumeric(event.e, 0)
+    meta:::chknumeric(event.c, 0)
+    meta:::chklogical(above.null)
     ##
     ## Section 4.3 Indirect log hazard ratio and variance estimation
     ##
@@ -68,8 +68,8 @@ calcTE.pval <- function(estimate, p.value,
     if (any(c(missing(n.e), missing(n.c))))
       V1 <- (event.e + event.c) / 4                         # equation (8)
     else {
-      meta::chknumeric(n.e, 0, zero = TRUE)
-      meta::chknumeric(n.c, 0, zero = TRUE)
+      meta:::chknumeric(n.e, 0, zero = TRUE)
+      meta:::chknumeric(n.c, 0, zero = TRUE)
       ##
       V1 <- (event.e + event.c) * n.e * n.c / (n.e + n.c)^2 # equation (11)
     }

@@ -25,10 +25,10 @@ calcTE.OE <- function(obs.e, exp.e, obs.c, exp.c, V, sm = "HR") {
     if (missing(exp.c))
       stop("Mandatory argument 'exp.c' if argument 'V' is missing")
     ##
-    meta::chknumeric(obs.e, 0)
-    meta::chknumeric(exp.e, 0)
-    meta::chknumeric(obs.c, 0)
-    meta::chknumeric(exp.c, 0)
+    meta:::chknumeric(obs.e, 0)
+    meta:::chknumeric(exp.e, 0)
+    meta:::chknumeric(obs.c, 0)
+    meta:::chknumeric(exp.c, 0)
     ##
     ## Equation (3)
     ##
@@ -54,9 +54,9 @@ calcTE.OE <- function(obs.e, exp.e, obs.c, exp.c, V, sm = "HR") {
     if (missing(exp.e))
       stop("Mandatory argument 'exp.e'")
     ##
-    meta::chknumeric(obs.e, 0)
-    meta::chknumeric(exp.e, 0)
-    meta::chknumeric(V, 0, zero = TRUE)
+    meta:::chknumeric(obs.e, 0)
+    meta:::chknumeric(exp.e, 0)
+    meta:::chknumeric(V, 0, zero = TRUE)
     ##
     ## Equation (4)
     ##
