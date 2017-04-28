@@ -1,7 +1,6 @@
 calcTE.range <- function(median, min, max, n,
                          sm = "",
-                         logtransf = ifelse(sm %in% c("OR", "RR", "HR"),
-                                            TRUE, FALSE),
+                         logtransf = meta:::is.relative.effect(sm),
                          sample = "small",
                          mean.is.median = FALSE) {
   
@@ -10,43 +9,6 @@ calcTE.range <- function(median, min, max, n,
   ## R function written by Guido Schwarzer (sc@imbi.uni-freiburg.de)
   ## License: GPL (>= 2)
   ##
-  
-  
-  ##
-  ## Auxiliary function from R package meta
-  ##
-  setchar <- function(x, val, text, list = FALSE, name = NULL) {
-    if (is.null(name))
-      name <- deparse(substitute(x))
-    nval <- length(val)
-    ##
-    idx <- charmatch(tolower(x), tolower(val), nomatch = NA)
-    ##
-    if (any(is.na(idx)) || any(idx == 0)) {
-      if (list)
-        first <- "List element '"
-      else
-        first <- "Argument '"
-      ##
-      if (missing(text)) {
-        if (nval == 1)
-          vlist <- paste('"', val, '"', sep = "")
-        else if (nval == 2)
-          vlist <- paste('"', val, '"', collapse = " or ", sep = "")
-        else
-          vlist <- paste(paste('"', val[-nval],
-                               '"', collapse = ", ", sep = ""),
-                         ', or ', '"', val[nval], '"', sep = "")
-        ##
-        stop(first, name, "' should be ", vlist, ".",
-             call. = FALSE)
-      }
-      else
-        stop(first, name, "' ", text, ".", call. = FALSE)
-    }
-    ##
-    val[idx]
-  }
   
   
   ##
@@ -66,7 +28,11 @@ calcTE.range <- function(median, min, max, n,
   if (any (min >= max))
     stop("Minimum must be smaller than maximum")
   ##
-  sample <- setchar(sample, c("small", "medium", "large"))
+  meta:::chklogical(logtransf)
+  ##
+  sample <- meta:::setchar(sample, c("small", "medium", "large"))
+  ##
+  meta:::chklogical(mean.is.median)
   
   
   ##

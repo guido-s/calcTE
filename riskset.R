@@ -1,12 +1,12 @@
 riskset <- function(time, S, R0, Fmin, Fmax){
+  
+  
   ##
   ## R function written by Guido Schwarzer (sc@imbi.uni-freiburg.de)
   ## License: GPL (>= 2)
   ##
-  ## Parmar et al. (1998), Stat Med
-  ##
-  ## Section 5
-  ## Estimating the log hazard ratio and its variance from survival curves
+  
+  
   ##
   ## Arguments:
   ##
@@ -15,6 +15,29 @@ riskset <- function(time, S, R0, Fmin, Fmax){
   ## R0   <=> patients at risk at t = 0
   ## Fmin <=> minimal follow-up
   ## Fmax <=> maximal follow-up
+  ##
+  
+  
+  ##
+  ## Check arguments
+  ##
+  if (missing(time))
+    stop("Mandatory argument 'time' missing")
+  if (missing(S))
+    stop("Mandatory argument 'S' missing")
+  if (missing(R0))
+    stop("Mandatory argument 'R0' missing")
+  if (missing(Fmin))
+    stop("Mandatory argument 'Fmin' missing")
+  if (missing(Fmax))
+    stop("Mandatory argument 'Fmax' missing")
+  
+  
+  ##
+  ## Parmar et al. (1998), Stat Med
+  ##
+  ## Section 5
+  ## Estimating the log hazard ratio and its variance from survival curves
   ##
   Cens <- function(R0, timeS, timeE, Fmin, Fmax){
     ##

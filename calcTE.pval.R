@@ -1,7 +1,6 @@
 calcTE.pval <- function(estimate, p.value,
                         sm = ifelse(!missing(event.e), "HR", ""),
-                        logtransf = ifelse(sm %in% c("OR", "RR", "HR"),
-                                           TRUE, FALSE),
+                        logtransf = meta:::is.relative.effect(sm),
                         event.e, n.e, event.c, n.c, above.null = TRUE) {
   
   
@@ -9,14 +8,28 @@ calcTE.pval <- function(estimate, p.value,
   ## R function written by Guido Schwarzer (sc@imbi.uni-freiburg.de)
   ## License: GPL (>= 2)
   ##
+  
+  
+  ##
+  ## Check arguments
+  ##
+  if (missing(p.value))
+    stop("Mandatory argument 'p.value' missing")
   if (any(p.value <= 0) | any(p.value >= 1))
     stop("no valid value for p-value")
+  ##
+  meta:::chklogical(logtransf)
   
   
   ##
   ## Parmar et al. (1998), Stat Med
   ##
   if (missing(event.e) | missing(event.c)) {
+    ##
+    ## Check argument
+    ##
+    if (missing(estimate))
+      stop("Argument 'estimate' missing")
     ##
     ## Section 4.1
     ##
@@ -37,14 +50,29 @@ calcTE.pval <- function(estimate, p.value,
   }
   else {
     ##
+    ## Check argument
+    ##
+    if (missing(event.e))
+      stop("Argument 'event.e' missing")
+    if (missing(event.c))
+      stop("Argument 'event.c' missing")
+    ##
+    meta::chknumeric(event.e, 0)
+    meta::chknumeric(event.c, 0)
+    meta::chklogical(above.null)
+    ##
     ## Section 4.3 Indirect log hazard ratio and variance estimation
     ##
     ## Estimation of inverse of Mantel-Haenszel variance (method 1)
     ##
     if (any(c(missing(n.e), missing(n.c))))
       V1 <- (event.e + event.c) / 4                         # equation (8)
-    else
+    else {
+      meta::chknumeric(n.e, 0, zero = TRUE)
+      meta::chknumeric(n.c, 0, zero = TRUE)
+      ##
       V1 <- (event.e + event.c) * n.e * n.c / (n.e + n.c)^2 # equation (11)
+    }
     ##
     ## Estimation of inverse of Mantel-Haenszel variance (method 2)
     ##

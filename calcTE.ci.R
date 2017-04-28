@@ -1,17 +1,33 @@
-calcTE.ci <- function(estimate, lower, upper, level = 0.95,
-                      sm = "",
-                      logtransf = ifelse(sm %in% c("OR", "RR", "HR"),
-                                         TRUE, FALSE)) {
+calcTE.ci <- function(estimate, lower, upper, level = 0.95, sm = "",
+                      logtransf = meta:::is.relative.effect(sm)) {
   
   
   ##
   ## R function written by Guido Schwarzer (sc@imbi.uni-freiburg.de)
   ## License: GPL (>= 2)
   ##
-  if (any(level <= 0 | level >= 1))
-    stop("no valid level for confidence interval")
+  
+  
   ##
-  alpha <- 1 - level
+  ## Check arguments
+  ##
+  if (missing(estimate))
+    stop("Mandatory argument 'estimate' missing")
+  if (missing(lower))
+    stop("Mandatory argument 'lower' missing")
+  if (missing(upper))
+    stop("Mandatory argument 'upper' missing")
+  ##
+  if (any (estimate <= lower))
+    stop("Estimate must be larger than lower limit")
+  if (any (estimate >= upper))
+    stop("Estimate must be smaller than upper limit")
+  if (any (lower >= upper))
+    stop("Lower limit must be smaller than upper limit")
+  ##
+  meta:::chklevel(level)
+  ##
+  meta:::chklogical(logtransf)
   
   
   ##
@@ -32,7 +48,8 @@ calcTE.ci <- function(estimate, lower, upper, level = 0.95,
   ##
   ## Equation (7)
   ##
-  varTE <- ((upper - lower) / (2 * qnorm(alpha / 2, lower.tail = FALSE)))^2
+  varTE <- ((upper - lower) /
+            (2 * qnorm((1 - level) / 2, lower.tail = FALSE)))^2
   seTE <- sqrt(varTE)
   
   
