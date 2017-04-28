@@ -12,6 +12,17 @@ calcTE.range <- function(median, min, max, n,
   
   
   ##
+  ## Estimate mean and its standard error from median and range
+  ## using method by Wan et al. (2014) which improves Hozo et al. (2005)
+  ##
+  ## References:
+  ##
+  ## Hozo et al. (2005), BMC Med Res Methodol 2005, 5:13)
+  ## Wan et al. (2014), BMC Med Res Methodol 14 (1): 135
+  ##
+  
+  
+  ##
   ## Check arguments
   ##
   if (missing(median))
@@ -35,10 +46,6 @@ calcTE.range <- function(median, min, max, n,
   meta:::chklogical(mean.is.median)
   
   
-  ##
-  ## Wan et al. (2014), BMC Med Res Methodol 14 (1): 135
-  ## based on Hozo et al. (2005), BMC Med Res Methodol 2005, 5:13
-  ##
   if (logtransf) {
     m <- log(median)
     a <- log(min)
@@ -60,24 +67,19 @@ calcTE.range <- function(median, min, max, n,
     else
       TE <- (a + 2 * m + b) / 4 + (a - 2 * m + b) / (4 * n)
   }
-  ##
-  ## Equation (5) and formula for S^2
-  ## Small sample formula from Hozo et al. (2005), equation (16)
-  ##
   if (missing(n)) {
+    ## Equation (6) in Wan et al. (2014)
     if (sample == "small")
-      seTE <- sqrt(1 / 12 * (0.25 * (a - 2 * m + b)^2 + (b - a)^2))
+      seTE <- sqrt(1 / 12 * ((b - a)^2 + 0.25 * (a - 2 * m + b)^2))
     else if (sample == "medium")
       seTE <- (b - a) / 4
-    else
+    else if (sample == "large")
       seTE <- (b - a) / 6
   }
-  else
-    seTE <- sqrt(1 / (n - 1) *
-                 (a^2 + m^2 + b^2 +
-                  0.50 * (n - 3) *
-                  0.25 * ((a + m)^2 + (m + b)^2) -
-                  n * (a + 2 * m + b)^2 / 16))
+  else {
+    ##  Equation (9) in Wan et al. (2014)
+    seTE <- (b - a) / (2 * qnorm((n - 0.375) / (n + 0.25)))
+  }
   
   
   res <- list(TE = TE, seTE = seTE, sm = sm,
